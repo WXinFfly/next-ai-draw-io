@@ -13,6 +13,7 @@ import { jsonrepair } from "jsonrepair"
 import path from "path"
 import { z } from "zod"
 import { getAIModel, supportsPromptCaching } from "@/lib/ai-providers"
+import { getCurrentUserId } from "@/lib/auth/get-current-user"
 import { findCachedResponse } from "@/lib/cached-responses"
 import {
     checkAndIncrementRequest,
@@ -26,7 +27,6 @@ import {
     wrapWithObserve,
 } from "@/lib/langfuse"
 import { getSystemPrompt } from "@/lib/system-prompts"
-import { getUserIdFromRequest } from "@/lib/user-id"
 
 export const maxDuration = 120
 
@@ -169,7 +169,7 @@ async function handleChatRequest(req: Request): Promise<Response> {
     const { messages, xml, previousXml, sessionId } = await req.json()
 
     // Get user ID for Langfuse tracking and quota
-    const userId = getUserIdFromRequest(req)
+    const userId = getCurrentUserId(req)
 
     // Validate sessionId for Langfuse (must be string, max 200 chars)
     const validSessionId =
