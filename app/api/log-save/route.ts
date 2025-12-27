@@ -1,5 +1,6 @@
 import { randomUUID } from "crypto"
 import { z } from "zod"
+import { getCurrentUserId } from "@/lib/auth/get-current-user"
 import { getLangfuseClient } from "@/lib/langfuse"
 
 const saveSchema = z.object({
@@ -32,6 +33,8 @@ export async function POST(req: Request) {
         return Response.json({ success: true, logged: false })
     }
 
+    const userId = await getCurrentUserId(req)
+
     try {
         const timestamp = new Date().toISOString()
 
@@ -42,9 +45,27 @@ export async function POST(req: Request) {
         })
 
         const traces = tracesResponse.data || []
-        const latestTrace = traces[0]
+        const matchingTrace = traces.find((trace) => trace.userId === userId)
+        const mismatchedTrace = traces.find(
+            (trace) => trace.userId && trace.userId !== userId,
+        )
+        const legacyTrace = traces.find((trace) => !trace.userId)
 
-        if (latestTrace) {
+        if (!matchingTrace && mismatchedTrace) {
+            return Response.json(
+                { success: false, error: "Forbidden" },
+                { status: 403 },
+            )
+        }
+
+        if (!matchingTrace && legacyTrace) {
+            return Response.json(
+                { success: false, error: "Legacy session is read-only" },
+                { status: 403 },
+            )
+        }
+
+        if (matchingTrace) {
             // Add a score to the existing trace to flag that user saved
             await langfuse.api.ingestion.batch({
                 batch: [
@@ -54,7 +75,7 @@ export async function POST(req: Request) {
                         timestamp,
                         body: {
                             id: randomUUID(),
-                            traceId: latestTrace.id,
+                            traceId: matchingTrace.id,
                             name: "diagram-saved",
                             value: 1,
                             comment: `User saved diagram as ${filename}.${format}`,
@@ -65,7 +86,7 @@ export async function POST(req: Request) {
         }
         // If no trace found, skip logging (user hasn't chatted yet)
 
-        return Response.json({ success: true, logged: !!latestTrace })
+        return Response.json({ success: true, logged: !!matchingTrace })
     } catch (error) {
         console.error("Langfuse save error:", error)
         return Response.json(
