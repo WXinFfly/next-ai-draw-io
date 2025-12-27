@@ -124,6 +124,20 @@
         "version": "Version",
         "restoreTo": "Restore to Version {version}?"
     },
+    "diagrams": {
+        "title": "Diagrams",
+        "subtitle": "Manage and switch your diagrams",
+        "newDiagram": "New diagram",
+        "untitled": "Untitled diagram",
+        "empty": "No diagrams yet. Create a new one to get started.",
+        "confirmDelete": "Delete this diagram? This action cannot be undone.",
+        "failedToLoad": "Failed to load diagrams.",
+        "failedToCreate": "Failed to create diagram.",
+        "failedToOpen": "Failed to open diagram.",
+        "failedToRename": "Failed to rename diagram.",
+        "failedToDelete": "Failed to delete diagram.",
+        "titleRequired": "Please enter a title."
+    },
     "dialogs": {
         "clearTitle": "Clear Everything?",
         "clearDescription": "This will clear the current conversation and reset the diagram. This action cannot be undone.",

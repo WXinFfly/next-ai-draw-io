@@ -5,6 +5,7 @@ export const STORAGE_KEYS = {
     // Chat data
     messages: "next-ai-draw-io-messages",
     xmlSnapshots: "next-ai-draw-io-xml-snapshots",
+    // Local cache for last opened diagram XML (server is source of truth)
     diagramXml: "next-ai-draw-io-diagram-xml",
     sessionId: "next-ai-draw-io-session-id",
 

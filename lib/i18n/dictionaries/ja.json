@@ -124,6 +124,20 @@
         "version": "バージョン",
         "restoreTo": "バージョン {version} に復元しますか？"
     },
+    "diagrams": {
+        "title": "ダイアグラム管理",
+        "subtitle": "ダイアグラムを管理して切り替えます",
+        "newDiagram": "新しいダイアグラム",
+        "untitled": "無題のダイアグラム",
+        "empty": "まだダイアグラムがありません。新規作成してください。",
+        "confirmDelete": "このダイアグラムを削除しますか？この操作は元に戻せません。",
+        "failedToLoad": "ダイアグラムの読み込みに失敗しました。",
+        "failedToCreate": "ダイアグラムの作成に失敗しました。",
+        "failedToOpen": "ダイアグラムを開けませんでした。",
+        "failedToRename": "ダイアグラム名の変更に失敗しました。",
+        "failedToDelete": "ダイアグラムの削除に失敗しました。",
+        "titleRequired": "タイトルを入力してください。"
+    },
     "dialogs": {
         "clearTitle": "すべてクリアしますか？",
         "clearDescription": "現在の会話をクリアし、ダイアグラムをリセットします。この操作は元に戻せません。",

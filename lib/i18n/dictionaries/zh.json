@@ -124,6 +124,20 @@
         "version": "版本",
         "restoreTo": "恢复到版本 {version}？"
     },
+    "diagrams": {
+        "title": "图表管理",
+        "subtitle": "管理并切换你的图表",
+        "newDiagram": "新建图表",
+        "untitled": "未命名图表",
+        "empty": "暂无图表，先创建一个开始吧。",
+        "confirmDelete": "确定删除此图表吗？此操作无法撤销。",
+        "failedToLoad": "加载图表失败。",
+        "failedToCreate": "创建图表失败。",
+        "failedToOpen": "打开图表失败。",
+        "failedToRename": "重命名图表失败。",
+        "failedToDelete": "删除图表失败。",
+        "titleRequired": "请输入标题。"
+    },
     "dialogs": {
         "clearTitle": "清除所有内容？",
         "clearDescription": "这将清除当前对话并重置图表。此操作无法撤消。",
