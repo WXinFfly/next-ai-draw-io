@@ -26,6 +26,7 @@ import {
     TooltipContent,
     TooltipTrigger,
 } from "@/components/ui/tooltip"
+import { UserMenu } from "@/components/user-menu"
 import { useDiagram } from "@/contexts/diagram-context"
 import { useDiagramToolHandlers } from "@/hooks/use-diagram-tool-handlers"
 import { useDictionary } from "@/hooks/use-dictionary"
@@ -1009,6 +1010,7 @@ export default function ChatPanel({
                                 className={`${isMobile ? "h-4 w-4" : "h-5 w-5"} text-muted-foreground`}
                             />
                         </ButtonWithTooltip>
+                        <UserMenu />
                         <div className="hidden sm:flex items-center gap-2">
                             {!isMobile && (
                                 <ButtonWithTooltip

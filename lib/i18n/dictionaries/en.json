@@ -18,7 +18,12 @@
         "settings": "Settings",
         "hidePanel": "Hide chat panel (Ctrl+B)",
         "showPanel": "Show chat panel (Ctrl+B)",
-        "aiChat": "AI Chat"
+        "aiChat": "AI Chat",
+        "userMenu": "Account",
+        "signedInAs": "Signed in as",
+        "guest": "Guest",
+        "signIn": "Sign in",
+        "signOut": "Sign out"
     },
     "providers": {
         "useServerDefault": "Use Server Default",

@@ -12,10 +12,12 @@ export type CurrentUser = {
     id: string
 }
 
-export function getCurrentUser(request?: Request): CurrentUser | null {
+export async function getCurrentUser(
+    request?: Request,
+): Promise<CurrentUser | null> {
     const token = request
         ? getSessionTokenFromRequest(request)
-        : cookies().get(SESSION_COOKIE_NAME)?.value
+        : (await cookies()).get(SESSION_COOKIE_NAME)?.value
     if (!token) {
         return null
     }
