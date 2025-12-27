@@ -1,7 +1,7 @@
 import "server-only"
 
 import { cookies } from "next/headers"
-
+import { getUserIdFromRequest } from "../user-id"
 import {
     getSessionTokenFromRequest,
     SESSION_COOKIE_NAME,
@@ -26,4 +26,9 @@ export function getCurrentUser(request?: Request): CurrentUser | null {
     return {
         id: session.userId,
     }
+}
+
+export function getCurrentUserId(request: Request): string {
+    const currentUser = getCurrentUser(request)
+    return currentUser?.id ?? getUserIdFromRequest(request)
 }

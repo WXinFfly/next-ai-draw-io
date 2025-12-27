@@ -1,7 +1,7 @@
 import { randomUUID } from "crypto"
 import { z } from "zod"
+import { getCurrentUserId } from "@/lib/auth/get-current-user"
 import { getLangfuseClient } from "@/lib/langfuse"
-import { getUserIdFromRequest } from "@/lib/user-id"
 
 const feedbackSchema = z.object({
     messageId: z.string().min(1).max(200),
@@ -34,7 +34,7 @@ export async function POST(req: Request) {
     }
 
     // Get user ID for tracking
-    const userId = getUserIdFromRequest(req)
+    const userId = getCurrentUserId(req)
 
     try {
         // Find the most recent chat trace for this session to attach the score to
