@@ -43,6 +43,8 @@
         "clearConversation": "清除对话",
         "diagramHistory": "图表历史",
         "saveDiagram": "保存图表",
+        "exportFromLibrary": "从图表库导出",
+        "importDrawio": "导入 .drawio 文件",
         "uploadFile": "上传文件（图片、PDF、文本）",
         "minimalStyle": "简约",
         "styledMode": "精致",
@@ -124,19 +126,17 @@
         "version": "版本",
         "restoreTo": "恢复到版本 {version}？"
     },
-    "diagrams": {
-        "title": "图表管理",
-        "subtitle": "管理并切换你的图表",
-        "newDiagram": "新建图表",
-        "untitled": "未命名图表",
-        "empty": "暂无图表，先创建一个开始吧。",
-        "confirmDelete": "确定删除此图表吗？此操作无法撤销。",
-        "failedToLoad": "加载图表失败。",
-        "failedToCreate": "创建图表失败。",
-        "failedToOpen": "打开图表失败。",
-        "failedToRename": "重命名图表失败。",
-        "failedToDelete": "删除图表失败。",
-        "titleRequired": "请输入标题。"
+    "library": {
+        "title": "图表库",
+        "description": "无需打开即可导出已保存的图表。",
+        "empty": "暂无图表。先导入一个 .drawio 文件。",
+        "importedAt": "导入时间",
+        "export": "导出",
+        "refresh": "刷新",
+        "importSuccess": "图表导入成功。",
+        "importFailed": "图表导入失败。",
+        "loadFailed": "加载图表失败。",
+        "exportFailed": "导出图表失败。"
     },
     "dialogs": {
         "clearTitle": "清除所有内容？",

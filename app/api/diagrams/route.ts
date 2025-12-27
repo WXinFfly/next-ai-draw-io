@@ -1,85 +1,40 @@
 import { NextResponse } from "next/server"
-import { z } from "zod"
-import { getCurrentUserId } from "@/lib/auth/get-current-user"
-import { EMPTY_DIAGRAM_XML } from "@/lib/diagram-templates"
-import {
-    createDiagram,
-    isDiagramsDbEnabled,
-    listDiagrams,
-} from "@/lib/dynamo-diagrams"
 
-const createSchema = z.object({
-    title: z.string().min(1).max(200).optional(),
-    xml: z.string().optional(),
-    svg: z.string().optional(),
-    metadata: z.record(z.unknown()).optional(),
-    userId: z.string().optional(),
-})
+interface DiagramRecord {
+    id: string
+    name: string
+    xml: string
+    createdAt: string
+}
 
-export async function GET(request: Request) {
-    if (!isDiagramsDbEnabled()) {
-        return NextResponse.json(
-            { error: "Diagrams storage is not configured." },
-            { status: 503 },
-        )
-    }
+const diagrams = new Map<string, DiagramRecord>()
 
-    const userId = await getCurrentUserId(request)
-    const { searchParams } = new URL(request.url)
-    const requestedUserId = searchParams.get("userId")
-    if (requestedUserId && requestedUserId !== userId) {
-        return NextResponse.json(
-            { error: "User ID mismatch." },
-            { status: 403 },
-        )
-    }
-
-    const diagrams = await listDiagrams(userId)
-    return NextResponse.json({ diagrams })
+export async function GET() {
+    return NextResponse.json(Array.from(diagrams.values()))
 }
 
 export async function POST(request: Request) {
-    if (!isDiagramsDbEnabled()) {
-        return NextResponse.json(
-            { error: "Diagrams storage is not configured." },
-            { status: 503 },
-        )
-    }
+    const body = (await request.json().catch(() => null)) as {
+        name?: string
+        xml?: string
+    } | null
 
-    const userId = await getCurrentUserId(request)
-    let data: z.infer<typeof createSchema>
-
-    try {
-        data = createSchema.parse(await request.json())
-    } catch (error) {
+    if (!body?.name || !body?.xml) {
         return NextResponse.json(
-            { error: "Invalid request payload." },
+            { error: "Missing diagram name or XML" },
             { status: 400 },
         )
     }
 
-    if (data.userId && data.userId !== userId) {
-        return NextResponse.json(
-            { error: "User ID mismatch." },
-            { status: 403 },
-        )
+    const id = crypto.randomUUID()
+    const record: DiagramRecord = {
+        id,
+        name: body.name,
+        xml: body.xml,
+        createdAt: new Date().toISOString(),
     }
 
-    const diagram = await createDiagram({
-        id: crypto.randomUUID(),
-        userId,
-        title: data.title?.trim() || "Untitled diagram",
-        xml: data.xml || EMPTY_DIAGRAM_XML,
-        svg: data.svg,
-        metadata: data.metadata,
-    })
+    diagrams.set(id, record)
 
-    if (!diagram) {
-        return NextResponse.json(
-            { error: "Failed to create diagram." },
-            { status: 500 },
-        )
-    }
-
-    return NextResponse.json({ diagram }, { status: 201 })
+    return NextResponse.json(record, { status: 201 })
 }

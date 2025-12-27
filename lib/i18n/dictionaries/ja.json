@@ -43,6 +43,8 @@
         "clearConversation": "会話をクリア",
         "diagramHistory": "ダイアグラム履歴",
         "saveDiagram": "ダイアグラムを保存",
+        "exportFromLibrary": "ダイアグラムライブラリからエクスポート",
+        "importDrawio": ".drawio ファイルをインポート",
         "uploadFile": "ファイルをアップロード（画像、PDF、テキスト）",
         "minimalStyle": "ミニマル",
         "styledMode": "スタイル付き",
@@ -124,19 +126,17 @@
         "version": "バージョン",
         "restoreTo": "バージョン {version} に復元しますか？"
     },
-    "diagrams": {
-        "title": "ダイアグラム管理",
-        "subtitle": "ダイアグラムを管理して切り替えます",
-        "newDiagram": "新しいダイアグラム",
-        "untitled": "無題のダイアグラム",
-        "empty": "まだダイアグラムがありません。新規作成してください。",
-        "confirmDelete": "このダイアグラムを削除しますか？この操作は元に戻せません。",
-        "failedToLoad": "ダイアグラムの読み込みに失敗しました。",
-        "failedToCreate": "ダイアグラムの作成に失敗しました。",
-        "failedToOpen": "ダイアグラムを開けませんでした。",
-        "failedToRename": "ダイアグラム名の変更に失敗しました。",
-        "failedToDelete": "ダイアグラムの削除に失敗しました。",
-        "titleRequired": "タイトルを入力してください。"
+    "library": {
+        "title": "ダイアグラムライブラリ",
+        "description": "開かずに保存済みダイアグラムをエクスポートできます。",
+        "empty": "まだダイアグラムがありません。.drawio ファイルをインポートしてください。",
+        "importedAt": "インポート日時",
+        "export": "エクスポート",
+        "refresh": "更新",
+        "importSuccess": "ダイアグラムをインポートしました。",
+        "importFailed": "ダイアグラムのインポートに失敗しました。",
+        "loadFailed": "ダイアグラムの読み込みに失敗しました。",
+        "exportFailed": "ダイアグラムのエクスポートに失敗しました。"
     },
     "dialogs": {
         "clearTitle": "すべてクリアしますか？",

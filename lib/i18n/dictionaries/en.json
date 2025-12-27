@@ -43,6 +43,8 @@
         "clearConversation": "Clear conversation",
         "diagramHistory": "Diagram history",
         "saveDiagram": "Save diagram",
+        "exportFromLibrary": "Export from diagram library",
+        "importDrawio": "Import .drawio file",
         "uploadFile": "Upload file (image, PDF, text)",
         "minimalStyle": "Minimal",
         "styledMode": "Styled",
@@ -124,19 +126,17 @@
         "version": "Version",
         "restoreTo": "Restore to Version {version}?"
     },
-    "diagrams": {
-        "title": "Diagrams",
-        "subtitle": "Manage and switch your diagrams",
-        "newDiagram": "New diagram",
-        "untitled": "Untitled diagram",
-        "empty": "No diagrams yet. Create a new one to get started.",
-        "confirmDelete": "Delete this diagram? This action cannot be undone.",
-        "failedToLoad": "Failed to load diagrams.",
-        "failedToCreate": "Failed to create diagram.",
-        "failedToOpen": "Failed to open diagram.",
-        "failedToRename": "Failed to rename diagram.",
-        "failedToDelete": "Failed to delete diagram.",
-        "titleRequired": "Please enter a title."
+    "library": {
+        "title": "Diagram Library",
+        "description": "Export a saved diagram without opening it.",
+        "empty": "No diagrams available yet. Import a .drawio file to get started.",
+        "importedAt": "Imported",
+        "export": "Export",
+        "refresh": "Refresh",
+        "importSuccess": "Diagram imported.",
+        "importFailed": "Failed to import diagram.",
+        "loadFailed": "Failed to load diagrams.",
+        "exportFailed": "Failed to export diagram."
     },
     "dialogs": {
         "clearTitle": "Clear Everything?",
