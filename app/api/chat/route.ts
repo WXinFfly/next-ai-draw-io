@@ -198,8 +198,8 @@ async function handleChatRequest(req: Request): Promise<Response> {
         req.headers.get("x-ai-provider") && req.headers.get("x-ai-api-key")
     )
 
-    // Skip quota check if: quota disabled, user has own API key, or is anonymous
-    if (isQuotaEnabled() && !hasOwnApiKey && userId !== "anonymous") {
+    // Skip quota check if: quota disabled or user has own API key
+    if (isQuotaEnabled() && !hasOwnApiKey) {
         const quotaCheck = await checkAndIncrementRequest(userId, {
             requests: Number(process.env.DAILY_REQUEST_LIMIT) || 10,
             tokens: Number(process.env.DAILY_TOKEN_LIMIT) || 200000,
@@ -545,12 +545,7 @@ ${userInputText}
             // Record token usage for server-side quota tracking (if enabled)
             // Use totalUsage (cumulative across all steps) instead of usage (final step only)
             // Include all 4 token types: input, output, cache read, cache write
-            if (
-                isQuotaEnabled() &&
-                !hasOwnApiKey &&
-                userId !== "anonymous" &&
-                totalUsage
-            ) {
+            if (isQuotaEnabled() && !hasOwnApiKey && totalUsage) {
                 const totalTokens =
                     (totalUsage.inputTokens || 0) +
                     (totalUsage.outputTokens || 0) +
