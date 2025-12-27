@@ -2,6 +2,8 @@
 
 import {
     Download,
+    FileDown,
+    FileUp,
     History,
     Image as ImageIcon,
     Loader2,
@@ -12,6 +14,7 @@ import type React from "react"
 import { useCallback, useEffect, useRef, useState } from "react"
 import { toast } from "sonner"
 import { ButtonWithTooltip } from "@/components/button-with-tooltip"
+import { DiagramLibraryDialog } from "@/components/diagram-library-dialog"
 import { ErrorToast } from "@/components/error-toast"
 import { HistoryDialog } from "@/components/history-dialog"
 import { ModelSelector } from "@/components/model-selector"
@@ -27,9 +30,11 @@ import {
 } from "@/components/ui/tooltip"
 import { useDiagram } from "@/contexts/diagram-context"
 import { useDictionary } from "@/hooks/use-dictionary"
+import { getApiEndpoint } from "@/lib/base-path"
 import { formatMessage } from "@/lib/i18n/utils"
 import { isPdfFile, isTextFile } from "@/lib/pdf-utils"
 import type { FlattenedModel } from "@/lib/types/model-config"
+import { validateAndFixXml } from "@/lib/utils"
 import { FilePreviewList } from "./file-preview-list"
 
 const MAX_IMAGE_SIZE = 2 * 1024 * 1024 // 2MB
@@ -196,8 +201,10 @@ export function ChatInput({
     } = useDiagram()
     const textareaRef = useRef<HTMLTextAreaElement>(null)
     const fileInputRef = useRef<HTMLInputElement>(null)
+    const drawioInputRef = useRef<HTMLInputElement>(null)
     const [isDragging, setIsDragging] = useState(false)
     const [showClearDialog, setShowClearDialog] = useState(false)
+    const [showLibraryDialog, setShowLibraryDialog] = useState(false)
     // Allow retry when there's an error (even if status is still "streaming" or "submitted")
     const isDisabled =
         (status === "streaming" || status === "submitted") && !error
@@ -290,6 +297,41 @@ export function ChatInput({
 
     const triggerFileInput = () => {
         fileInputRef.current?.click()
+    }
+
+    const triggerDrawioImport = () => {
+        drawioInputRef.current?.click()
+    }
+
+    const handleDrawioImport = async (
+        e: React.ChangeEvent<HTMLInputElement>,
+    ) => {
+        const file = e.target.files?.[0]
+        if (!file) return
+        e.target.value = ""
+
+        try {
+            const content = await file.text()
+            const validation = validateAndFixXml(content)
+            if (!validation.valid) {
+                showErrorToast(dict.errors.validationFailed)
+                return
+            }
+            const xml = validation.fixed ?? content
+            const name = file.name.replace(/\.drawio$/i, "") || "diagram"
+            const response = await fetch(getApiEndpoint("/api/diagrams"), {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ name, xml }),
+            })
+            if (!response.ok) {
+                throw new Error("Failed to import diagram")
+            }
+            toast.success(dict.library.importSuccess)
+        } catch (error) {
+            console.error(error)
+            showErrorToast(dict.library.importFailed)
+        }
     }
 
     const handleDragOver = (e: React.DragEvent<HTMLFormElement>) => {
@@ -445,6 +487,18 @@ export function ChatInput({
                             <Download className="h-4 w-4" />
                         </ButtonWithTooltip>
 
+                        <ButtonWithTooltip
+                            type="button"
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => setShowLibraryDialog(true)}
+                            disabled={isDisabled}
+                            tooltipContent={dict.chat.exportFromLibrary}
+                            className="h-8 w-8 p-0 text-muted-foreground hover:text-foreground"
+                        >
+                            <FileDown className="h-4 w-4" />
+                        </ButtonWithTooltip>
+
                         <SaveDialog
                             open={showSaveDialog}
                             onOpenChange={setShowSaveDialog}
@@ -454,6 +508,11 @@ export function ChatInput({
                             defaultFilename={`diagram-${new Date()
                                 .toISOString()
                                 .slice(0, 10)}`}
+                        />
+
+                        <DiagramLibraryDialog
+                            open={showLibraryDialog}
+                            onOpenChange={setShowLibraryDialog}
                         />
 
                         <ButtonWithTooltip
@@ -468,6 +527,18 @@ export function ChatInput({
                             <ImageIcon className="h-4 w-4" />
                         </ButtonWithTooltip>
 
+                        <ButtonWithTooltip
+                            type="button"
+                            variant="ghost"
+                            size="sm"
+                            onClick={triggerDrawioImport}
+                            disabled={isDisabled}
+                            tooltipContent={dict.chat.importDrawio}
+                            className="h-8 w-8 p-0 text-muted-foreground hover:text-foreground"
+                        >
+                            <FileUp className="h-4 w-4" />
+                        </ButtonWithTooltip>
+
                         <input
                             type="file"
                             ref={fileInputRef}
@@ -475,6 +546,15 @@ export function ChatInput({
                             onChange={handleFileChange}
                             accept="image/*,.pdf,application/pdf,text/*,.md,.markdown,.json,.csv,.xml,.yaml,.yml,.toml"
                             multiple
+                            disabled={isDisabled}
+                        />
+
+                        <input
+                            type="file"
+                            ref={drawioInputRef}
+                            className="hidden"
+                            onChange={handleDrawioImport}
+                            accept=".drawio,application/xml,text/xml"
                             disabled={isDisabled}
                         />
 
