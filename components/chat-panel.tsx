@@ -18,6 +18,7 @@ import { FaGithub } from "react-icons/fa"
 import { Toaster, toast } from "sonner"
 import { ButtonWithTooltip } from "@/components/button-with-tooltip"
 import { ChatInput } from "@/components/chat-input"
+import { DiagramManagerPanel } from "@/components/diagram-manager-panel"
 import { ModelConfigDialog } from "@/components/model-config-dialog"
 import { ResetWarningModal } from "@/components/reset-warning-modal"
 import { SettingsDialog } from "@/components/settings-dialog"
@@ -33,6 +34,7 @@ import { useDictionary } from "@/hooks/use-dictionary"
 import { getSelectedAIConfig, useModelConfig } from "@/hooks/use-model-config"
 import { getApiEndpoint } from "@/lib/base-path"
 import { findCachedResponse } from "@/lib/cached-responses"
+import { saveDiagramCache } from "@/lib/diagram-cache"
 import { isPdfFile, isTextFile } from "@/lib/pdf-utils"
 import { type FileData, useFileProcessor } from "@/lib/use-file-processor"
 import { useQuotaManager } from "@/lib/use-quota-manager"
@@ -44,7 +46,6 @@ import { DevXmlSimulator } from "./dev-xml-simulator"
 const STORAGE_MESSAGES_KEY = "next-ai-draw-io-messages"
 const STORAGE_XML_SNAPSHOTS_KEY = "next-ai-draw-io-xml-snapshots"
 const STORAGE_SESSION_ID_KEY = "next-ai-draw-io-session-id"
-export const STORAGE_DIAGRAM_XML_KEY = "next-ai-draw-io-diagram-xml"
 
 // sessionStorage keys
 const SESSION_STORAGE_INPUT_KEY = "next-ai-draw-io-input"
@@ -121,6 +122,7 @@ export default function ChatPanel({
         handleExportWithoutHistory,
         resolverRef,
         chartXML,
+        diagramId,
         clearDiagram,
     } = useDiagram()
 
@@ -513,7 +515,7 @@ export default function ChatPanel({
     // Save session ID to localStorage
     useEffect(() => {
         localStorage.setItem(STORAGE_SESSION_ID_KEY, sessionId)
-    }, [sessionId])
+    }, [diagramId, sessionId])
 
     useEffect(() => {
         if (messagesEndRef.current) {
@@ -536,8 +538,8 @@ export default function ChatPanel({
                     ),
                 )
                 const xml = chartXMLRef.current
-                if (xml && xml.length > 300) {
-                    localStorage.setItem(STORAGE_DIAGRAM_XML_KEY, xml)
+                if (xml && xml.length > 300 && diagramId) {
+                    saveDiagramCache(diagramId, xml)
                 }
                 localStorage.setItem(STORAGE_SESSION_ID_KEY, sessionId)
             } catch (error) {
@@ -659,7 +661,6 @@ export default function ChatPanel({
         try {
             localStorage.removeItem(STORAGE_MESSAGES_KEY)
             localStorage.removeItem(STORAGE_XML_SNAPSHOTS_KEY)
-            localStorage.removeItem(STORAGE_DIAGRAM_XML_KEY)
             localStorage.setItem(STORAGE_SESSION_ID_KEY, newSessionId)
             sessionStorage.removeItem(SESSION_STORAGE_INPUT_KEY)
             toast.success("Started a fresh chat")
@@ -1027,6 +1028,8 @@ export default function ChatPanel({
                     </div>
                 </div>
             </header>
+
+            <DiagramManagerPanel />
 
             {/* Messages */}
             <main className="flex-1 w-full overflow-hidden">
