@@ -169,7 +169,7 @@ async function handleChatRequest(req: Request): Promise<Response> {
     const { messages, xml, previousXml, sessionId } = await req.json()
 
     // Get user ID for Langfuse tracking and quota
-    const userId = getCurrentUserId(req)
+    const userId = await getCurrentUserId(req)
 
     // Validate sessionId for Langfuse (must be string, max 200 chars)
     const validSessionId =

@@ -30,7 +30,7 @@ export async function getCurrentUser(
     }
 }
 
-export function getCurrentUserId(request: Request): string {
-    const currentUser = getCurrentUser(request)
+export async function getCurrentUserId(request: Request): Promise<string> {
+    const currentUser = await getCurrentUser(request)
     return currentUser?.id ?? getUserIdFromRequest(request)
 }

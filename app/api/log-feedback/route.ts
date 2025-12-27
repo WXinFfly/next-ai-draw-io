@@ -34,7 +34,7 @@ export async function POST(req: Request) {
     }
 
     // Get user ID for tracking
-    const userId = getCurrentUserId(req)
+    const userId = await getCurrentUserId(req)
 
     try {
         // Find the most recent chat trace for this session to attach the score to
@@ -44,9 +44,27 @@ export async function POST(req: Request) {
         })
 
         const traces = tracesResponse.data || []
-        const latestTrace = traces[0]
+        const matchingTrace = traces.find((trace) => trace.userId === userId)
+        const mismatchedTrace = traces.find(
+            (trace) => trace.userId && trace.userId !== userId,
+        )
+        const legacyTrace = traces.find((trace) => !trace.userId)
 
-        if (!latestTrace) {
+        if (!matchingTrace && mismatchedTrace) {
+            return Response.json(
+                { success: false, error: "Forbidden" },
+                { status: 403 },
+            )
+        }
+
+        if (!matchingTrace && legacyTrace) {
+            return Response.json(
+                { success: false, error: "Legacy session is read-only" },
+                { status: 403 },
+            )
+        }
+
+        if (!matchingTrace) {
             // No trace found for this session - create a standalone feedback trace
             const traceId = randomUUID()
             const timestamp = new Date().toISOString()
@@ -96,7 +114,7 @@ export async function POST(req: Request) {
                         timestamp,
                         body: {
                             id: randomUUID(),
-                            traceId: latestTrace.id,
+                            traceId: matchingTrace.id,
                             name: "user-feedback",
                             value: feedback === "good" ? 1 : 0,
                             comment: `User gave ${feedback} feedback`,
