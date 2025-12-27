@@ -43,6 +43,8 @@
         "clearConversation": "会話をクリア",
         "diagramHistory": "ダイアグラム履歴",
         "saveDiagram": "ダイアグラムを保存",
+        "exportFromLibrary": "ダイアグラムライブラリからエクスポート",
+        "importDrawio": ".drawio ファイルをインポート",
         "uploadFile": "ファイルをアップロード（画像、PDF、テキスト）",
         "minimalStyle": "ミニマル",
         "styledMode": "スタイル付き",
@@ -123,6 +125,18 @@
         "noHistory": "まだ履歴がありません。メッセージを送信してダイアグラム履歴を作成してください。",
         "version": "バージョン",
         "restoreTo": "バージョン {version} に復元しますか？"
+    },
+    "library": {
+        "title": "ダイアグラムライブラリ",
+        "description": "開かずに保存済みダイアグラムをエクスポートできます。",
+        "empty": "まだダイアグラムがありません。.drawio ファイルをインポートしてください。",
+        "importedAt": "インポート日時",
+        "export": "エクスポート",
+        "refresh": "更新",
+        "importSuccess": "ダイアグラムをインポートしました。",
+        "importFailed": "ダイアグラムのインポートに失敗しました。",
+        "loadFailed": "ダイアグラムの読み込みに失敗しました。",
+        "exportFailed": "ダイアグラムのエクスポートに失敗しました。"
     },
     "dialogs": {
         "clearTitle": "すべてクリアしますか？",
