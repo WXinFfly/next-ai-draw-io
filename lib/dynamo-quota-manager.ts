@@ -66,7 +66,7 @@ interface QuotaCheckResult {
  * Each day automatically gets a new item - no explicit reset needed.
  */
 export async function checkAndIncrementRequest(
-    ip: string,
+    userId: string,
     limits: QuotaLimits,
 ): Promise<QuotaCheckResult> {
     // Skip if quota tracking not enabled
@@ -74,7 +74,7 @@ export async function checkAndIncrementRequest(
         return { allowed: true }
     }
 
-    const pk = ip // User identifier (base64 IP)
+    const pk = userId // User identifier
     const sk = getTodayInTimezone() // Date as sort key (YYYY-MM-DD)
     const currentMinute = Math.floor(Date.now() / 60000).toString()
 
@@ -166,12 +166,12 @@ export async function checkAndIncrementRequest(
                 // Condition failed but no limit clearly exceeded - race condition edge case
                 // Fail safe by allowing (could be a TPM reset race)
                 console.warn(
-                    `[quota] Condition failed but no limit exceeded for IP prefix: ${ip.slice(0, 8)}...`,
+                    `[quota] Condition failed but no limit exceeded for userId prefix: ${userId.slice(0, 8)}...`,
                 )
                 return { allowed: true }
             } catch (getError: any) {
                 console.error(
-                    `[quota] Failed to get quota details after condition failure, IP prefix: ${ip.slice(0, 8)}..., error: ${getError.message}`,
+                    `[quota] Failed to get quota details after condition failure, userId prefix: ${userId.slice(0, 8)}..., error: ${getError.message}`,
                 )
                 return { allowed: true } // Fail open
             }
@@ -179,7 +179,7 @@ export async function checkAndIncrementRequest(
 
         // Other DynamoDB errors - fail open
         console.error(
-            `[quota] DynamoDB error (fail-open), IP prefix: ${ip.slice(0, 8)}..., error: ${e.message}`,
+            `[quota] DynamoDB error (fail-open), userId prefix: ${userId.slice(0, 8)}..., error: ${e.message}`,
         )
         return { allowed: true }
     }
@@ -191,14 +191,14 @@ export async function checkAndIncrementRequest(
  * Handles minute boundaries atomically to prevent race conditions.
  */
 export async function recordTokenUsage(
-    ip: string,
+    userId: string,
     tokens: number,
 ): Promise<void> {
     // Skip if quota tracking not enabled
     if (!client || !TABLE) return
     if (!Number.isFinite(tokens) || tokens <= 0) return
 
-    const pk = ip // User identifier (base64 IP)
+    const pk = userId // User identifier
     const sk = getTodayInTimezone() // Date as sort key (YYYY-MM-DD)
     const currentMinute = Math.floor(Date.now() / 60000).toString()
 
@@ -243,12 +243,12 @@ export async function recordTokenUsage(
                 )
             } catch (retryError: any) {
                 console.error(
-                    `[quota] Failed to record tokens (retry), IP prefix: ${ip.slice(0, 8)}..., tokens: ${tokens}, error: ${retryError.message}`,
+                    `[quota] Failed to record tokens (retry), userId prefix: ${userId.slice(0, 8)}..., tokens: ${tokens}, error: ${retryError.message}`,
                 )
             }
         } else {
             console.error(
-                `[quota] Failed to record tokens, IP prefix: ${ip.slice(0, 8)}..., tokens: ${tokens}, error: ${e.message}`,
+                `[quota] Failed to record tokens, userId prefix: ${userId.slice(0, 8)}..., tokens: ${tokens}, error: ${e.message}`,
             )
         }
     }
